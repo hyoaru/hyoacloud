@@ -88,6 +88,87 @@ export class LandingZoneStack extends cdk.Stack {
     );
     stagingAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
+    // Service Control Policies
+    new organizations.CfnPolicy(
+      this,
+      "OrganizationMemberTetherServiceControlPolicy",
+      {
+        name: "OrganizationMemberTether",
+        description: "Prevents member accounts from leaving the organization",
+        type: "SERVICE_CONTROL_POLICY",
+        targetIds: [organization.attrRootId],
+        content: {
+          Version: "2012-10-17",
+          Statement: [
+            {
+              Effect: "Deny",
+              Action: "organizations:LeaveOrganization",
+              Resource: "*",
+            },
+          ],
+        },
+      },
+    );
+
+    new organizations.CfnPolicy(
+      this,
+      "NoRootActivityOnMemberAccountServiceControlPolicy",
+      {
+        name: "NoRootActivityOnMemberAccount",
+        description: "Blocks any action by the Root user in member accounts",
+        type: "SERVICE_CONTROL_POLICY",
+        targetIds: [coreOu.attrId, workloadOu.attrId],
+        content: {
+          Version: "2012-10-17",
+          Statement: [
+            {
+              Effect: "Deny",
+              Action: "*",
+              Resource: "*",
+              Condition: {
+                StringLike: {
+                  "aws:PrincipalArn": "arn:aws:iam::*:root",
+                },
+              },
+            },
+          ],
+        },
+      },
+    );
+
+    new organizations.CfnPolicy(this, "RestrictRegionServiceControlPolicy", {
+      name: "RestrictRegion",
+      description:
+        "Denies all actions in any region except specified regions and required global services",
+      type: "SERVICE_CONTROL_POLICY",
+      targetIds: [coreOu.attrId, workloadOu.attrId],
+      content: {
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Deny",
+            NotAction: [
+              "iam:*",
+              "organizations:*",
+              "route53:*",
+              "budgets:*",
+              "support:*",
+              "cloudfront:*",
+              "wafv2:*",
+              "globalaccelerator:*",
+              "kms:*",
+            ],
+            Resource: "*",
+            Condition: {
+              StringNotEquals: {
+                "aws:RequestedRegion": ["ap-southeast-1"],
+              },
+            },
+          },
+        ],
+      },
+    });
+
     // Identity Center
     const platformAdministratorsGroup = new identitystore.CfnGroup(
       this,
