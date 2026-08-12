@@ -1,6 +1,7 @@
 import * as cdk from "aws-cdk-lib/core";
 import { Construct } from "constructs";
 import {
+  aws_sso as sso,
   aws_organizations as organizations,
   aws_identitystore as identitystore,
 } from "aws-cdk-lib";
@@ -95,6 +96,18 @@ export class LandingZoneStack extends cdk.Stack {
         identityStoreId: process.env.IDENTITY_STORE_ID!,
         displayName: "PlatformAdministrators",
         description: "Group for Cloud Administrators with full access",
+      },
+    );
+
+    const platformAdministratorsPermissionSet = new sso.CfnPermissionSet(
+      this,
+      "PlatformAdministratorsPermissionSet",
+      {
+        name: "PlatformsAdministratorsAccess",
+        description: "Full Administrative Access",
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        managedPolicies: ["arn:aws:iam::aws:policy/AdministratorAccess"],
+        sessionDuration: "PT1H",
       },
     );
   }
