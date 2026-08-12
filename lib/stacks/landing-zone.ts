@@ -110,5 +110,75 @@ export class LandingZoneStack extends cdk.Stack {
         sessionDuration: "PT1H",
       },
     );
+
+    new sso.CfnAssignment(
+      this,
+      "LogArchiveAccountPlatformAdministratorAssignment",
+      {
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        permissionSetArn:
+          platformAdministratorsPermissionSet.attrPermissionSetArn,
+        principalType: "GROUP",
+        principalId: platformAdministratorsGroup.attrGroupId,
+        targetType: "AWS_ACCOUNT",
+        targetId: logArchiveAccount.ref,
+      },
+    );
+
+    new sso.CfnAssignment(
+      this,
+      "SecurityAccountPlatformAdministratorAssignment",
+      {
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        permissionSetArn:
+          platformAdministratorsPermissionSet.attrPermissionSetArn,
+        principalType: "GROUP",
+        principalId: platformAdministratorsGroup.attrGroupId,
+        targetType: "AWS_ACCOUNT",
+        targetId: securityAccount.ref,
+      },
+    );
+
+    new sso.CfnAssignment(
+      this,
+      "ToolingAccountPlatformAdministratorAssignment",
+      {
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        permissionSetArn:
+          platformAdministratorsPermissionSet.attrPermissionSetArn,
+        principalType: "GROUP",
+        principalId: platformAdministratorsGroup.attrGroupId,
+        targetType: "AWS_ACCOUNT",
+        targetId: toolingAccount.ref,
+      },
+    );
+
+    new sso.CfnAssignment(
+      this,
+      "ProductionAccountPlatformAdministratorAssignment",
+      {
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        permissionSetArn:
+          platformAdministratorsPermissionSet.attrPermissionSetArn,
+        principalType: "GROUP",
+        principalId: platformAdministratorsGroup.attrGroupId,
+        targetType: "AWS_ACCOUNT",
+        targetId: productionAccount.ref,
+      },
+    );
+
+    new sso.CfnAssignment(
+      this,
+      "StagingAccountPlatformAdministratorAssignment",
+      {
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        permissionSetArn:
+          platformAdministratorsPermissionSet.attrPermissionSetArn,
+        principalType: "GROUP",
+        principalId: platformAdministratorsGroup.attrGroupId,
+        targetType: "AWS_ACCOUNT",
+        targetId: stagingAccount.ref,
+      },
+    );
   }
 }
