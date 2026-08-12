@@ -1,6 +1,9 @@
 import * as cdk from "aws-cdk-lib/core";
 import { Construct } from "constructs";
-import { aws_organizations as organizations } from "aws-cdk-lib";
+import {
+  aws_organizations as organizations,
+  aws_identitystore as identitystore,
+} from "aws-cdk-lib";
 
 export class LandingZoneStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -83,5 +86,16 @@ export class LandingZoneStack extends cdk.Stack {
       },
     );
     stagingAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+
+    // Identity Center
+    const platformAdministratorsGroup = new identitystore.CfnGroup(
+      this,
+      "PlatformAdministratorsGroup",
+      {
+        identityStoreId: process.env.IDENTITY_STORE_ID!,
+        displayName: "PlatformAdministrators",
+        description: "Group for Cloud Administrators with full access",
+      },
+    );
   }
 }
