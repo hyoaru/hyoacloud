@@ -12,7 +12,6 @@ export class LandingZoneStack extends cdk.Stack {
       "Organization",
       { featureSet: "ALL" },
     );
-
     organization.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     // Organizational Units
@@ -20,11 +19,13 @@ export class LandingZoneStack extends cdk.Stack {
       name: "Core",
       parentId: organization.attrRootId,
     });
+    coreOu.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     const workloadOu = new organizations.CfnOrganizationalUnit(
       this,
       "WorkloadOu",
       { name: "Workload", parentId: organization.attrRootId },
     );
+    workloadOu.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
   }
 }
