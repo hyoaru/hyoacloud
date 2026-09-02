@@ -120,7 +120,8 @@ export class LandingZoneStack extends cdk.Stack {
       "NoRootActivityOnMemberAccountServiceControlPolicy",
       {
         name: "NoRootActivityOnMemberAccount",
-        description: "Blocks any action by the Root user in member accounts",
+        description:
+          "Blocks direct root user activity in member accounts while allowing centralized root sessions",
         type: "SERVICE_CONTROL_POLICY",
         targetIds: [coreOu.attrId, workloadOu.attrId],
         content: {
@@ -133,6 +134,9 @@ export class LandingZoneStack extends cdk.Stack {
               Condition: {
                 StringLike: {
                   "aws:PrincipalArn": "arn:aws:iam::*:root",
+                },
+                Null: {
+                  "aws:AssumedRoot": "true",
                 },
               },
             },
@@ -154,10 +158,15 @@ export class LandingZoneStack extends cdk.Stack {
             Effect: "Deny",
             NotAction: [
               "iam:*",
+              "account:*",
               "organizations:*",
               "route53:*",
               "budgets:*",
               "support:*",
+              "cloudwatch:*",
+              "ce:*",
+              "pricingplanmanager:*",
+              "billing:*",
               "cloudfront:*",
               "wafv2:*",
               "globalaccelerator:*",
