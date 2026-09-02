@@ -136,6 +136,7 @@ export class LandingZoneStack extends cdk.Stack {
               "cloudwatch:*",
               "ce:*",
               "pricingplanmanager:*",
+              "cost-optimization-hub:*",
               "billing:*",
               "cloudfront:*",
               "wafv2:*",
