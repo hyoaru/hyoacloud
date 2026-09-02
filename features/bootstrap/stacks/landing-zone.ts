@@ -7,23 +7,30 @@ import {
 } from "aws-cdk-lib";
 
 export class LandingZoneStack extends cdk.Stack {
+  public readonly organization: organizations.CfnOrganization;
+  public readonly logArchiveAccount: organizations.CfnAccount;
+  public readonly securityAccount: organizations.CfnAccount;
+  public readonly toolingAccount: organizations.CfnAccount;
+  public readonly stagingAccount: organizations.CfnAccount;
+  public readonly productionAccount: organizations.CfnAccount;
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // AWS Organization
-    const organization = new organizations.CfnOrganization(
+    this.organization = new organizations.CfnOrganization(
       this,
       "Organization",
       {
         featureSet: "ALL",
       },
     );
-    organization.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    this.organization.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     // Organizational Units
     const coreOu = new organizations.CfnOrganizationalUnit(this, "CoreOu", {
       name: "Core",
-      parentId: organization.attrRootId,
+      parentId: this.organization.attrRootId,
     });
     coreOu.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
@@ -32,13 +39,13 @@ export class LandingZoneStack extends cdk.Stack {
       "WorkloadOu",
       {
         name: "Workload",
-        parentId: organization.attrRootId,
+        parentId: this.organization.attrRootId,
       },
     );
     workloadOu.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     // Accounts
-    const logArchiveAccount = new organizations.CfnAccount(
+    this.logArchiveAccount = new organizations.CfnAccount(
       this,
       "LogArchiveCoreAccount",
       {
@@ -47,9 +54,9 @@ export class LandingZoneStack extends cdk.Stack {
         parentIds: [coreOu.ref],
       },
     );
-    logArchiveAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    this.logArchiveAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    const securityAccount = new organizations.CfnAccount(
+    this.securityAccount = new organizations.CfnAccount(
       this,
       "SecurityCoreAccount",
       {
@@ -58,9 +65,9 @@ export class LandingZoneStack extends cdk.Stack {
         parentIds: [coreOu.ref],
       },
     );
-    securityAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    this.securityAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    const toolingAccount = new organizations.CfnAccount(
+    this.toolingAccount = new organizations.CfnAccount(
       this,
       "ToolingCoreAccount",
       {
@@ -69,9 +76,9 @@ export class LandingZoneStack extends cdk.Stack {
         parentIds: [coreOu.ref],
       },
     );
-    toolingAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    this.toolingAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    const productionAccount = new organizations.CfnAccount(
+    this.productionAccount = new organizations.CfnAccount(
       this,
       "ProductionWorkloadAccount",
       {
@@ -80,9 +87,9 @@ export class LandingZoneStack extends cdk.Stack {
         parentIds: [workloadOu.ref],
       },
     );
-    productionAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    this.productionAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
-    const stagingAccount = new organizations.CfnAccount(
+    this.stagingAccount = new organizations.CfnAccount(
       this,
       "StagingWorkloadAccount",
       {
@@ -91,7 +98,7 @@ export class LandingZoneStack extends cdk.Stack {
         parentIds: [workloadOu.ref],
       },
     );
-    stagingAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    this.stagingAccount.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
     // Service Control Policies
     new organizations.CfnPolicy(
@@ -101,7 +108,7 @@ export class LandingZoneStack extends cdk.Stack {
         name: "OrganizationMemberTether",
         description: "Prevents member accounts from leaving the organization",
         type: "SERVICE_CONTROL_POLICY",
-        targetIds: [organization.attrRootId],
+        targetIds: [this.organization.attrRootId],
         content: {
           Version: "2012-10-17",
           Statement: [
@@ -187,7 +194,7 @@ export class LandingZoneStack extends cdk.Stack {
         principalType: "GROUP",
         principalId: managementAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
-        targetId: organization.attrManagementAccountId,
+        targetId: this.organization.attrManagementAccountId,
       },
     );
 
@@ -223,7 +230,7 @@ export class LandingZoneStack extends cdk.Stack {
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
-        targetId: logArchiveAccount.ref,
+        targetId: this.logArchiveAccount.ref,
       },
     );
 
@@ -237,7 +244,7 @@ export class LandingZoneStack extends cdk.Stack {
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
-        targetId: securityAccount.ref,
+        targetId: this.securityAccount.ref,
       },
     );
 
@@ -251,7 +258,7 @@ export class LandingZoneStack extends cdk.Stack {
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
-        targetId: toolingAccount.ref,
+        targetId: this.toolingAccount.ref,
       },
     );
 
@@ -265,7 +272,7 @@ export class LandingZoneStack extends cdk.Stack {
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
-        targetId: productionAccount.ref,
+        targetId: this.productionAccount.ref,
       },
     );
 
@@ -279,7 +286,7 @@ export class LandingZoneStack extends cdk.Stack {
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
-        targetId: stagingAccount.ref,
+        targetId: this.stagingAccount.ref,
       },
     );
   }

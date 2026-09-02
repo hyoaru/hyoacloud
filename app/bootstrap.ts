@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import "dotenv/config";
 import * as cdk from "aws-cdk-lib/core";
+import "dotenv/config";
 import { LandingZoneStack } from "../lib/stacks/landing-zone";
 
 const app = new cdk.App();
