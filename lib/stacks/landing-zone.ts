@@ -14,7 +14,9 @@ export class LandingZoneStack extends cdk.Stack {
     const organization = new organizations.CfnOrganization(
       this,
       "Organization",
-      { featureSet: "ALL" },
+      {
+        featureSet: "ALL",
+      },
     );
     organization.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
@@ -28,7 +30,10 @@ export class LandingZoneStack extends cdk.Stack {
     const workloadOu = new organizations.CfnOrganizationalUnit(
       this,
       "WorkloadOu",
-      { name: "Workload", parentId: organization.attrRootId },
+      {
+        name: "Workload",
+        parentId: organization.attrRootId,
+      },
     );
     workloadOu.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
 
@@ -170,6 +175,42 @@ export class LandingZoneStack extends cdk.Stack {
     });
 
     // Identity Center
+    const managementAdministratorsGroup = new identitystore.CfnGroup(
+      this,
+      "ManagementAdministratorsGroup",
+      {
+        identityStoreId: process.env.IDENTITY_STORE_ID!,
+        displayName: "ManagementAdmnistrators",
+        description: "Group for Management Administrators with full access",
+      },
+    );
+
+    const managementAdministratorPermissionSet = new sso.CfnPermissionSet(
+      this,
+      "ManagementAdministratorPermissionSet",
+      {
+        name: "ManagementAdministratorAccess",
+        description: "Full Administrative Access",
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        managedPolicies: ["arn:aws:iam::aws:policy/AdministratorAccess"],
+        sessionDuration: "PT1H",
+      },
+    );
+
+    new sso.CfnAssignment(
+      this,
+      "ManagementAccountManagementAdministratorAssignment",
+      {
+        instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
+        permissionSetArn:
+          managementAdministratorPermissionSet.attrPermissionSetArn,
+        principalType: "GROUP",
+        principalId: managementAdministratorsGroup.attrGroupId,
+        targetType: "AWS_ACCOUNT",
+        targetId: organization.attrManagementAccountId,
+      },
+    );
+
     const platformAdministratorsGroup = new identitystore.CfnGroup(
       this,
       "PlatformAdministratorsGroup",
