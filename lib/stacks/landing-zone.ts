@@ -115,36 +115,6 @@ export class LandingZoneStack extends cdk.Stack {
       },
     );
 
-    new organizations.CfnPolicy(
-      this,
-      "NoRootActivityOnMemberAccountServiceControlPolicy",
-      {
-        name: "NoRootActivityOnMemberAccount",
-        description:
-          "Blocks direct root user activity in member accounts while allowing centralized root sessions",
-        type: "SERVICE_CONTROL_POLICY",
-        targetIds: [coreOu.attrId, workloadOu.attrId],
-        content: {
-          Version: "2012-10-17",
-          Statement: [
-            {
-              Effect: "Deny",
-              Action: "*",
-              Resource: "*",
-              Condition: {
-                StringLike: {
-                  "aws:PrincipalArn": "arn:aws:iam::*:root",
-                },
-                Null: {
-                  "aws:AssumedRoot": "true",
-                },
-              },
-            },
-          ],
-        },
-      },
-    );
-
     new organizations.CfnPolicy(this, "RestrictRegionServiceControlPolicy", {
       name: "RestrictRegion",
       description:
