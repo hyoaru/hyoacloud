@@ -221,11 +221,11 @@ export class LandingZoneStack extends cdk.Stack {
       },
     );
 
-    const platformAdministratorsPermissionSet = new sso.CfnPermissionSet(
+    const platformAdministratorPermissionSet = new sso.CfnPermissionSet(
       this,
-      "PlatformAdministratorsPermissionSet",
+      "PlatformAdministratorPermissionSet",
       {
-        name: "PlatformsAdministratorsAccess",
+        name: "PlatformAdministratorAccess",
         description: "Full Administrative Access",
         instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
         managedPolicies: ["arn:aws:iam::aws:policy/AdministratorAccess"],
@@ -239,7 +239,7 @@ export class LandingZoneStack extends cdk.Stack {
       {
         instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
         permissionSetArn:
-          platformAdministratorsPermissionSet.attrPermissionSetArn,
+          platformAdministratorPermissionSet.attrPermissionSetArn,
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
@@ -253,7 +253,7 @@ export class LandingZoneStack extends cdk.Stack {
       {
         instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
         permissionSetArn:
-          platformAdministratorsPermissionSet.attrPermissionSetArn,
+          platformAdministratorPermissionSet.attrPermissionSetArn,
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
@@ -267,7 +267,7 @@ export class LandingZoneStack extends cdk.Stack {
       {
         instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
         permissionSetArn:
-          platformAdministratorsPermissionSet.attrPermissionSetArn,
+          platformAdministratorPermissionSet.attrPermissionSetArn,
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
@@ -281,7 +281,7 @@ export class LandingZoneStack extends cdk.Stack {
       {
         instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
         permissionSetArn:
-          platformAdministratorsPermissionSet.attrPermissionSetArn,
+          platformAdministratorPermissionSet.attrPermissionSetArn,
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
@@ -295,7 +295,7 @@ export class LandingZoneStack extends cdk.Stack {
       {
         instanceArn: process.env.IDENTITY_CENTER_INSTANCE_ARN!,
         permissionSetArn:
-          platformAdministratorsPermissionSet.attrPermissionSetArn,
+          platformAdministratorPermissionSet.attrPermissionSetArn,
         principalType: "GROUP",
         principalId: platformAdministratorsGroup.attrGroupId,
         targetType: "AWS_ACCOUNT",
