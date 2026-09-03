@@ -146,6 +146,7 @@ export class LandingZoneStack extends cdk.Stack {
               "cost-optimization-hub:*",
               "billing:*",
               "cloudfront:*",
+              "shield:*",
               "wafv2:*",
               "globalaccelerator:*",
               "kms:*",
