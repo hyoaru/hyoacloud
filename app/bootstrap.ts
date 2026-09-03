@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib/core";
-import "dotenv/config";
-import { LandingZoneStack } from "../lib/stacks/landing-zone";
+import dotenv from "dotenv";
+import { LandingZoneStack } from "../features/bootstrap/stacks";
+dotenv.config({ path: ".env.bootstrap" });
 
 const app = new cdk.App();
 

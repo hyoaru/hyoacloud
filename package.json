@@ -5,7 +5,18 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "synth:bootstrap": "cdk synth --app 'npx tsx app/bootstrap.ts'",
+    "diff:bootstrap": "cdk diff --app 'npx tsx app/bootstrap.ts'",
+    "deploy:bootstrap": "cdk deploy --app 'npx tsx app/bootstrap.ts'",
+    "synth:infrastructure": "cdk synth '**'",
+    "diff:infrastructure": "cdk diff '**'",
+    "deploy:infrastructure": "cdk deploy '**'"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.263.0",
+    "constructs": "^10.5.0",
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@swc/core": "^1.15.0",
@@ -16,10 +27,5 @@
     "jest": "^30",
     "tsx": "^4.23.0",
     "typescript": "~7.0.2"
-  },
-  "dependencies": {
-    "aws-cdk-lib": "^2.263.0",
-    "constructs": "^10.5.0",
-    "dotenv": "^17.4.2"
   }
 }
