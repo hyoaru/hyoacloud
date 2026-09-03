@@ -6,9 +6,18 @@ export class IdentityStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    new iam.OpenIdConnectProvider(this, "GitHubOIDC", {
-      url: "https://token.actions.githubusercontent.com",
-      clientIds: ["sts.amazonaws.com"],
+    const githubOidcProvider = new iam.OpenIdConnectProvider(
+      this,
+      "GithubOidcProvider",
+      {
+        url: "https://token.actions.githubusercontent.com",
+        clientIds: ["sts.amazonaws.com"],
+      },
+    );
+
+    new cdk.CfnOutput(this, "GithubOidcProviderArn", {
+      value: githubOidcProvider.openIdConnectProviderArn,
+      exportName: "GithubOidcProviderArn",
     });
   }
 }
